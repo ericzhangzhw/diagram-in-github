@@ -1,0 +1,28 @@
+name: Render PlantUML Diagrams
+
+on:
+  push:
+    paths:
+      - "diagrams/*.puml"
+
+jobs:
+  generate-diagrams:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Generate Diagrams
+        uses: aybabtme/kroki-action@v1
+        with:
+          input_files: "diagrams/*.puml"
+          output_format: "svg"
+
+      - name: Commit Changes
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add diagrams/*.svg
+          git commit -m "Generated diagrams" || echo "No changes to commit"
+          git push
+
